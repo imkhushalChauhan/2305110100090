@@ -234,3 +234,71 @@ If the application grows further, I would also:
 - Archive old notifications that are no longer needed.
 - Cache frequently accessed data using Redis.
 - Monitor slow queries and optimize them regularly.
+
+
+
+Stage 4 - Performance Improvements
+
+Possible Performance Issues
+
+As the number of users and notifications increases, the system may face the following challenges:
+
+- Slower database queries due to a large amount of data.
+- Increased server load during peak hours.
+- Delay in delivering notifications to users.
+- Higher response time if all notifications are fetched at once.
+
+
+
+Performance Improvements
+1. Pagination
+
+Instead of loading all notifications, return them in smaller batches.
+
+Example:
+
+
+GET /notifications?page=1&limit=20
+
+
+This reduces the response size and improves API performance.
+
+2. Database Indexing
+
+Create indexes on frequently searched fields such as:
+
+- studentId
+- isRead
+- createdAt
+
+This helps retrieve notifications much faster.
+
+3. Caching
+
+Frequently accessed data, such as unread notifications, can be cached using Redis.
+
+This reduces the number of database queries and improves response time.
+
+4. Background Processing
+
+Sending notifications should happen in the background instead of during the API request.
+
+This allows the user to receive a faster response while the notification is processed asynchronously.
+
+5. Load Balancing
+
+If the application receives a large number of requests, multiple server instances can be deployed behind a load balancer.
+
+This distributes traffic evenly and improves reliability.
+
+Monitoring
+
+To monitor application performance, I would track:
+
+- API response time
+- Database query execution time
+- Server CPU and memory usage
+- Error rate
+- Number of notifications processed
+
+Regular monitoring helps identify performance issues early and improves the overall user experience.
