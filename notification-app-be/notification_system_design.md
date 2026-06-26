@@ -164,12 +164,73 @@ db.notifications.deleteOne({
 
 Index
 
-```javascript
+javascript
 db.notifications.createIndex({
   studentId: 1,
   isRead: 1,
   createdAt: -1
 })
-```
+
 
 This index helps retrieve unread notifications quickly for a specific student.
+
+
+Stage 3 - Query Optimization
+
+Issues in the Given Query
+
+The original query may become slow when the notifications table contains a large number of records because:
+
+- It has to scan many rows before filtering.
+- Without proper indexes, searching by s{tudent_id and is_read} takes more time.
+- Sorting by {created_at} can also slow down the query.
+
+
+Optimized Query
+
+sql
+SELECT id, message, type, created_at
+FROM notifications
+WHERE student_id = ?
+  AND is_read = FALSE
+ORDER BY created_at DESC
+LIMIT 20;
+
+
+Why is this better?
+
+- Retrieves only the required columns instead of using {SELECT *}.
+- Uses {LIMIT} to return only the latest 20 notifications.
+- Orders results by newest notifications first.
+- Reduces the amount of data transferred from the database.
+
+
+
+Recommended Index
+
+sql
+CREATE INDEX idx_notifications_student_read_date
+ON notifications(student_id, is_read, created_at DESC);
+
+This index helps the database quickly locate unread notifications for a student and sort them efficiently.
+
+SQL Query for Placement Notifications (Last 7 Days)
+
+sql
+SELECT id,
+       message,
+       created_at
+FROM notifications
+WHERE type = 'Placement'
+  AND created_at >= NOW() - INTERVAL '7 days'
+ORDER BY created_at DESC;
+
+
+Additional Improvements
+
+If the application grows further, I would also:
+
+- Use pagination for loading notifications.
+- Archive old notifications that are no longer needed.
+- Cache frequently accessed data using Redis.
+- Monitor slow queries and optimize them regularly.
