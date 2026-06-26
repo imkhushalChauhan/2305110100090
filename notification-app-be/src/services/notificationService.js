@@ -3,10 +3,9 @@ const { v4: uuid } = require("uuid");
 const notifications = [];
 
 exports.create = (data) => {
-
     const notification = {
         id: uuid(),
-        ...data
+        ...data,
     };
 
     notifications.push(notification);
@@ -14,4 +13,6 @@ exports.create = (data) => {
     return notification;
 };
 
-exports.getAll = () => notifications;
+exports.getAll = () => {
+    return notifications;
+};

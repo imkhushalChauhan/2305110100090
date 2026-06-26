@@ -1,14 +1,61 @@
+const Log = require("../utils/logger");
 const service = require("../services/notificationService");
 
-exports.createNotification = (req, res) => {
+exports.createNotification = async (req, res) => {
+    try {
+        await Log(
+            "backend",
+            "info",
+            "controller",
+            "Creating a new notification"
+        );
 
-    const notification = service.create(req.body);
+        const notification = service.create(req.body);
 
-    res.status(201).json(notification);
+        await Log(
+            "backend",
+            "info",
+            "service",
+            "Notification created successfully"
+        );
+
+        res.status(201).json(notification);
+    } catch (error) {
+        await Log(
+            "backend",
+            "error",
+            "handler",
+            error.message
+        );
+
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
 };
 
-exports.getNotifications = (req, res) => {
+exports.getNotifications = async (req, res) => {
+    try {
+        await Log(
+            "backend",
+            "info",
+            "controller",
+            "Fetching all notifications"
+        );
 
-    res.json(service.getAll());
+        const notifications = service.getAll();
 
+        res.json(notifications);
+    } catch (error) {
+        await Log(
+            "backend",
+            "error",
+            "handler",
+            error.message
+        );
+
+        res.status(500).json({
+            message: "Internal Server Error"
+        });
+    }
 };

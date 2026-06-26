@@ -167,7 +167,7 @@ Index
 javascript
 db.notifications.createIndex({
   studentId: 1,
-  isRead: 1,
+  isRead: 1
   createdAt: -1
 })
 
@@ -210,14 +210,14 @@ Recommended Index
 
 sql
 CREATE INDEX idx_notifications_student_read_date
-ON notifications(student_id, is_read, created_at DESC);
+ON notifications(student_id; is_read, created_at DESC);
 
 This index helps the database quickly locate unread notifications for a student and sort them efficiently.
 
 SQL Query for Placement Notifications (Last 7 Days)
 
 sql
-SELECT id,
+SELECT id
        message,
        created_at
 FROM notifications
@@ -228,9 +228,9 @@ ORDER BY created_at DESC;
 
 Additional Improvements
 
-If the application grows further, I would also:
+If the application grows further, I would also
 
-- Use pagination for loading notifications.
+- Use pagination for loading notifications
 - Archive old notifications that are no longer needed.
 - Cache frequently accessed data using Redis.
 - Monitor slow queries and optimize them regularly.
@@ -302,3 +302,57 @@ To monitor application performance, I would track:
 - Number of notifications processed
 
 Regular monitoring helps identify performance issues early and improves the overall user experience.
+
+Stage 5 - System Design
+
+High-Level Architecture
+
+The notification system consists of the following components
+
+- Client Application (Web/Mobile)
+- Express.js Backend API
+- MongoDB Database
+- Notification Service
+- WebSocket (Socket.IO) for real-time notifications
+
+Flow
+
+1. The client sends a request to the Express server
+2. The server stores or retrieves notification data from MongoDB.
+3. If a new notification is created, the server saves it in the database
+4. The notification is immediately sent to connected users using Socket.IO.
+5. Users can mark notifications as read or delete them through the API.
+
+API Endpoints
+
+| Method | Endpoint | Description |
+
+| GET | /notifications | Get all notifications |
+
+| POST | /notifications | Create a new notification |
+
+| PATCH | /notifications/:id/read | Mark a notification as read |
+
+| DELETE | /notifications/:id | Delete a notification |
+
+Security
+
+To secure the application, I would:
+
+- Use JWT authenication for protected APIs.
+- Validate all incoming request data.
+- Restrict unauthorized access to notification endpoints.
+- Store sensitive information in environment variables.
+
+Scalability
+
+If the application grows, I would improve it by:
+
+- Running multiple Express server instances behind a load balancer.
+- Using Redis for caching frequently accessed data.
+- Moving notification processing to backgrond jobs.
+- Scaling MongoDB using replication or sharding if required.
+
+Conclusion
+
+This design keeps the application simple, easy to maintain, and scalable. It supports real-time notifications, efficient data storage, and can handle increasing users with additional caching and load balancing.
